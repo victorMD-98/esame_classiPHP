@@ -112,3 +112,5 @@ if(isset($_REQUEST["action"])&&$_REQUEST["action"]==="register"){
             exit;
 }
 
+header('Location:http://localhost/esame_classiPHP/index.php');
+
