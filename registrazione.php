@@ -9,12 +9,33 @@ namespace Registrazione {
             public function __construct(PDO $conn) {
                 $this->conn = $conn;
             }
+            public function getAllUsers() {
+                $sql = 'SELECT * FROM users';
+                $stmt = $this->conn->query($sql);
+            
+                if ($stmt === false) {
+                    // Gestisci l'errore nella query
+                    return null;
+                }
+            
+                $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+                // Controlla se ci sono risultati
+                if ($results === false) {
+                    // Nessun risultato trovato
+                    return null;
+                }
+            
+                return $results;
+            }
 
-            // public function getAll() {
-            //     $sql = 'SELECT * FROM biblioteca.materialebibliotecario WHERE tipo = "Libro"';
-            //     $res = $this->conn->query($sql, PDO::FETCH_ASSOC);
-            //     return $res ? $res : null;
-            // }
+            public function getUserById(int $id) {
+                $sql = 'SELECT * FROM users WHERE id = :id';
+                $stm = $this->conn->prepare($sql);
+                $stm->execute(['id' => $id]);
+                return $stm->fetchAll();
+            }
+            
             public function getUserByEmail(string $email) {
                 $sql = 'SELECT * FROM users WHERE email = :email';
                 $stm = $this->conn->prepare($sql);
@@ -29,21 +50,35 @@ namespace Registrazione {
                 return $stm->rowCount();
             }
 
-            // public function updateLibro(Libro $libro) {
-            //     $sql = "UPDATE biblioteca.materialebibliotecario SET titolo = :titolo, annoPubblicazione = :annoPubblicazione, autore = :autore WHERE id = :id";
-            //     $stm = $this->conn->prepare($sql);
-            //     $stm->execute([
-            //                     'titolo' => $libro->titolo, 
-            //                     'annoPubblicazione' => $libro->annoPubblicazione, 
-            //                     'autore' => $libro->autore, 
-            //                     'id' => $libro->id]);
-            //     return $stm->rowCount();
-            // }
-            // public function deleteLibro(int $id) {
-            //     $sql = "DELETE FROM biblioteca.materialebibliotecario WHERE id = :id";
-            //     $stm = $this->conn->prepare($sql);
-            //     $stm->execute(['id' => $id]);
-            //    return $stm->rowCount();
-            // }
+            public function updateUser(Utente $utente, $id) {
+                $sql = "UPDATE users SET name=:name, surname=:surname, tel=:tel, city=:city, email=:email, password=:password, image=:image WHERE id = :id";
+                $stm = $this->conn->prepare($sql);
+            
+                $params = [
+                    'name' => $utente->name,
+                    'surname' => $utente->surname,
+                    'tel' => $utente->tel,
+                    'city' => $utente->city,
+                    'email' => $utente->getEmail(),
+                    'password' => $utente->getPass(),
+                    'image' => $utente->img,
+                    'id' => $id
+                ];
+            
+                // Associa i parametri
+                foreach ($params as $key => $value) {
+                    $stm->bindParam(":$key", $params[$key]);
+                }
+            
+                $stm->execute();
+                return $stm->rowCount();
+            }
+            
+            public function deleteUser(int $id) {
+                $sql = "DELETE FROM users WHERE id = :id";
+                $stm = $this->conn->prepare($sql);
+                $stm->execute(['id' => $id]);
+               return $stm->rowCount();
+            }
     }
 }

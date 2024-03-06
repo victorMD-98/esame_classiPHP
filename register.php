@@ -13,12 +13,12 @@
                     <input type="text" class="form-control" name="surname" >
                 </div>
                 <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Città</label>
-                    <input type="text" class="form-control" name="city" >
-                </div>
-                <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Tel</label>
                     <input type="tel" class="form-control" name="tel">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Città</label>
+                    <input type="text" class="form-control" name="city" >
                 </div>
                 <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Img</label>

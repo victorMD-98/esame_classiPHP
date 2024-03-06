@@ -1,10 +1,20 @@
 <?php
+    require_once "db.php";
+    require_once "config.php";
+    require_once "registrazione.php";
   session_start();
   if(!isset($_SESSION['userLogin']) && isset($_COOKIE["useremail"]) && isset($_COOKIE["userpassword"])) {
-    header('Location: http://localhost/esercizio_session/logica.php?email='.$_COOKIE["useremail"].'&password='.$_COOKIE["userpassword"]);
+    header('Location: http://localhost/esame_classiPHP/logica.php?email='.$_COOKIE["useremail"].'&password='.$_COOKIE["userpassword"]);
   } else if(!isset($_SESSION['userLogin'])) {
     header('Location:http://localhost/esame_classiPHP/login.php');
-  }
+  } 
+  use db\DB_Pdo;
+  use Registrazione\User;
+  $PDOConn = DB_Pdo::getInstance($config);
+  $conn = $PDOConn->getConnection();
+    $user = new User($conn);
+    $res = $user->getAllUsers();
+    //var_dump($res); 
 ?>
 
 <?php require_once "header.php" ?>
@@ -27,8 +37,8 @@
                     </thead>
                     <tbody>
                         <?php 
-                        if($users){
-                        foreach ($users as $key => $contact) { 
+                        if($res){
+                        foreach ($res as $key => $contact) { 
                         ?>
                             <tr>
                                 <th scope="row"><?= $key+1 ?></th>
@@ -40,7 +50,7 @@
                                 <td><?= $contact["email"] ?></td>
                                 <td>
                                 <a class="btn btn-danger" href="logica.php?action=delete&id=<?=$contact["id"]?> " role="button">Elimina</a>
-                                <a class="btn btn-warning" href="modicica.php?&id=<?=$contact["id"]?>" role="button">Update</a>
+                                <a class="btn btn-warning" href="modifica.php?&id=<?=$contact["id"]?>" role="button">Update</a>
                                 </td>
                             </tr>
                         <?php } }?>

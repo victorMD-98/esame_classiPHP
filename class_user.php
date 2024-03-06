@@ -12,8 +12,8 @@ namespace Utenti{
 
         function __construct($name,
         $surname,
-        $city,
         $tel,
+        $city,
         $email,
         $password,
         $img){

@@ -45,10 +45,15 @@ if(isset($_REQUEST["action"])&&$_REQUEST["action"]==="register"){
     $name=strlen(trim(htmlspecialchars($_REQUEST['name']))) > 2 ? trim(htmlspecialchars($_REQUEST['name'])) : exit();
     $surname=strlen(trim(htmlspecialchars($_REQUEST['surname']))) > 2 ? trim(htmlspecialchars($_REQUEST['surname'])) : exit();
     $city=strlen(trim(htmlspecialchars($_REQUEST['city']))) > 2 ? trim(htmlspecialchars($_REQUEST['city'])) : exit();
+
     $tel=$matches ? htmlspecialchars($_REQUEST['tel']) : exit() ;
+
     $email=$regexmail ? trim(htmlspecialchars($_REQUEST['email'])) : exit();
+
     $pass=$matchesPass ? trim(htmlspecialchars($_REQUEST['password'])) : exit();
+
     $password= password_hash($pass, PASSWORD_DEFAULT);
+
     $u = new Utente($name,$surname,$tel,$city,$email,$password, $GLOBALS['avatar']);
 
     $user = new User($conn);
@@ -63,8 +68,8 @@ if(isset($_REQUEST["action"])&&$_REQUEST["action"]==="register"){
     $pass = $matchesPass ? htmlspecialchars($_REQUEST['password']) : exit();
     $user = new User($conn);
     $res = $user->getUserByEmail($email);
-    print_r($res[0]['password']);
-    print_r($_REQUEST);
+    // print_r($res[0]['password']);
+    // print_r($_REQUEST);
     
         if(password_verify($pass, $res[0]['password'])){ 
             $_SESSION['userLogin'] = $res[0];
@@ -80,5 +85,30 @@ if(isset($_REQUEST["action"])&&$_REQUEST["action"]==="register"){
             header('Location:http://localhost/esame_classiPHP/login.php');
         }
     
+} else if(isset($_REQUEST["action"])&&$_REQUEST["action"]==="modifica"){
+    $regexphone = '/(?:([+]\d{1,4})[-.\s]?)?(?:[(](\d{1,3})[)][-.\s]?)?(\d{1,4})[-.\s]?(\d{1,4})[-.\s]?(\d{1,9})/';
+    preg_match_all($regexphone,htmlspecialchars($_REQUEST['tel']), $matches, PREG_SET_ORDER, 0);
+    $regexmail = '/^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/m';
+    preg_match_all($regexmail,trim(htmlspecialchars($_REQUEST['email'])) , $matchesEmail, PREG_SET_ORDER, 0);
+    $regexPAss = '/^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/';
+    preg_match($regexPAss, trim(htmlspecialchars($_REQUEST['password'])), $matchesPass, PREG_OFFSET_CAPTURE, 0);
+
+    $name=strlen(trim(htmlspecialchars($_REQUEST['name']))) > 2 ? trim(htmlspecialchars($_REQUEST['name'])) : exit();
+    $surname=strlen(trim(htmlspecialchars($_REQUEST['surname']))) > 2 ? trim(htmlspecialchars($_REQUEST['surname'])) : exit();
+    $city=strlen(trim(htmlspecialchars($_REQUEST['city']))) > 2 ? trim(htmlspecialchars($_REQUEST['city'])) : exit();
+    $tel=$matches ? htmlspecialchars($_REQUEST['tel']) : exit() ;
+    $email=$regexmail ? trim(htmlspecialchars($_REQUEST['email'])) : exit();
+    $pass=$matchesPass ? trim(htmlspecialchars($_REQUEST['password'])) : exit();
+    $password= password_hash($pass, PASSWORD_DEFAULT);
+    $u = new Utente($name,$surname,$tel,$city,$email,$password, $GLOBALS['avatar']);
+
+    $user = new User($conn);
+    $user->updateUser($u,$_REQUEST['id']);
+    exit(header('Location:http://localhost/esame_classiPHP/index.php'));
+}else if(isset($_REQUEST["action"])&&$_REQUEST["action"]==="delete"){
+    $user = new User($conn);
+    $user->deleteUser($_REQUEST['id']);
+    header('Location:http://localhost/esame_classiPHP/index.php');
+            exit;
 }
 
