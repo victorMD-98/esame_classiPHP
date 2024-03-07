@@ -65,7 +65,6 @@ namespace Registrazione {
                     'id' => $id
                 ];
             
-                // Associa i parametri
                 foreach ($params as $key => $value) {
                     $stm->bindParam(":$key", $params[$key]);
                 }
